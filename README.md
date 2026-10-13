@@ -17,7 +17,7 @@ Tools: .................. Docker
 
 # Hobbies ─────────────────────────────────────────────────────
 Hobbies.Gaming: ......... Dark Souls, Terraria
-Hobbies.Other: .......... Reading
+Hobbies.Other: .......... Reading, Music
 
 # Contact ─────────────────────────────────────────────────────
 Email.Personal: ......... matiasnm14@gmail.com
