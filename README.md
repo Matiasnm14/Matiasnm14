@@ -1,8 +1,3 @@
-![Matiasnm14 — terminal profile](assets/profile-terminal.svg)
-
-<details>
-<summary>Profile in plain text</summary>
-
 ```yaml
 matiasnm14 ─────────────────────────────────────────────────────
 
@@ -31,14 +26,13 @@ Discord: ................ Matiasnm14
 ```
 
 <!-- GITHUB-STATS:START -->
-```diff
+```yaml
 # GitHub Stats ────────────────────────────────────────────────
-   Repos.Owned: ··············· 9
-   Repos.Contributed.Recent: ·· 2
-   Commits: ··················· 67
-++ Lines.Added: ··············· 153,888
--- Lines.Removed: ············· 3,348
-   Lines.Net: ················· 150,540
+Repos.Owned: ............... 9
+Repos.Contributed.Recent: .. 2
+Commits: ................... 67
+Lines.Net: ................. 150,540
+
+++153,888 --3,348: Lines.Added / Lines.Removed
 ```
 <!-- GITHUB-STATS:END -->
-

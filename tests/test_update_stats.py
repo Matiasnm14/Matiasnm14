@@ -4,7 +4,6 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
-import xml.etree.ElementTree as ET
 
 spec = importlib.util.spec_from_file_location(
     "update_stats", Path(__file__).resolve().parents[1] / "scripts/update_stats.py")
@@ -17,19 +16,15 @@ class StatisticsTests(unittest.TestCase):
         return {"repositories": 12, "contributed_recent": 3, "commits": 70,
                 "lines_added": 160000, "lines_removed": 4000, "lines_net": 156000}
 
-    def test_terminal_svg_escapes_profile_text_and_contains_all_statistics(self):
-        readme = (Path(__file__).resolve().parents[1] / "README.md").read_text()
-        readme = readme.replace("Reading, Music", "Reading & <Music>")
-        svg = stats.render_terminal(self.sample_stats(), readme)
-        root = ET.fromstring(svg)
-        content = " ".join(root.itertext())
-        self.assertIn("Reading & <Music>", content)
-        for value in ("12", "3", "70", "160,000", "4,000", "156,000"):
-            self.assertIn(value, content)
-        self.assertNotIn("<image", svg)
-        self.assertNotIn("<script", svg)
+    def test_rendered_statistics_use_yaml_and_signed_counter_key(self):
+        block = stats.render_block(self.sample_stats())
+        self.assertIn("```yaml\n", block)
+        self.assertNotIn("```diff", block)
+        self.assertIn("++160,000 --4,000: Lines.Added / Lines.Removed", block)
+        self.assertEqual(block.count(stats.START), 1)
+        self.assertEqual(block.count(stats.END), 1)
 
-    def test_success_updates_readme_and_terminal_together(self):
+    def test_success_updates_only_readme_without_creating_images(self):
         readme_text = (Path(__file__).resolve().parents[1] / "README.md").read_text()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -40,27 +35,7 @@ class StatisticsTests(unittest.TestCase):
                 stats.main()
             self.assertEqual((root / "README.md").read_text(),
                              stats.replace_block(readme_text, stats.render_block(self.sample_stats())))
-            graphic = root / "assets/profile-terminal.svg"
-            self.assertIn("160,000", graphic.read_text())
-            ET.parse(graphic)
-            self.assertFalse((root / "README.md.tmp").exists())
-            self.assertFalse(graphic.with_suffix(".svg.tmp").exists())
-
-    def test_render_error_preserves_both_existing_files(self):
-        original = f"{stats.START}\nprevious\n{stats.END}"
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "README.md").write_text(original)
-            (root / "assets").mkdir()
-            graphic = root / "assets/profile-terminal.svg"
-            graphic.write_text("previous graphic")
-            with patch.object(stats, "ROOT", root), \
-                 patch.dict(os.environ, {"GH_TOKEN": "test-token"}), \
-                 patch.object(stats, "collect_stats", return_value=self.sample_stats()):
-                with self.assertRaises(ValueError):
-                    stats.main()
-            self.assertEqual((root / "README.md").read_text(), original)
-            self.assertEqual(graphic.read_text(), "previous graphic")
+            self.assertEqual({p.name for p in root.iterdir()}, {"README.md"})
 
     def test_shared_commit_is_counted_once(self):
         commits = {"me/a": [{"oid": "shared", "additions": 20, "deletions": 3}],
