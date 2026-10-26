@@ -24,18 +24,3 @@ Email.Personal: ......... matiasnm14@gmail.com
 Email.Work: ............. matiasnunez1@upb.edu
 Discord: ................ Matiasnm14
 ```
-
-<!-- GITHUB-STATS:START -->
-```yaml
-# GitHub Stats ────────────────────────────────────────────────
-Repos.Owned: ............... 9
-Repos.Contributed.Recent: .. 2
-Commits: ................... 70
-Lines.Net: ................. 150,364
-```
-
-$`\small{\color{#7ee787}\texttt{Lines.Added:................}}{\color{#39ff14}\texttt{++153,944}}`$<br>$`\small{\color{#7ee787}\texttt{Lines.Removed:..............}}{\color{#ff5555}\texttt{--3,580}}`$
-<!-- GITHUB-STATS:END -->
-```
-
-
