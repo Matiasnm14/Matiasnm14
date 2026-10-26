@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Update only the statistics block, using GitHub's public GraphQL data."""
 
-import datetime as dt
 import json
 import os
 from pathlib import Path
@@ -137,16 +136,17 @@ def collect_stats(api, username):
             "lines_removed": deletions, "lines_net": additions - deletions}
 
 
-def render_block(stats, date):
+def render_block(stats):
     labels = [("Repos.Owned", "repositories"),
               ("Repos.Contributed.Recent", "contributed_recent"),
               ("Commits", "commits"), ("Lines.Added", "lines_added"),
               ("Lines.Removed", "lines_removed"), ("Lines.Net", "lines_net")]
-    lines = [START, "```yaml",
+    lines = [START, "```diff",
              "# GitHub Stats ────────────────────────────────────────────────"]
     for label, key in labels:
-        lines.append(f"{label}: {'·' * (26 - len(label))} {stats[key]:,}")
-    lines.extend([f"Updated: {'·' * 19} {date} (UTC)", "```", END])
+        prefix = "++ " if key == "lines_added" else "-- " if key == "lines_removed" else "   "
+        lines.append(f"{prefix}{label}: {'·' * (26 - len(label))} {stats[key]:,}")
+    lines.extend(["```", END])
     return "\n".join(lines)
 
 
@@ -169,8 +169,7 @@ def main():
     readme = readme_path.read_text(encoding="utf-8")
     replace_block(readme, "validation")  # Validate before making API calls.
     stats = collect_stats(GitHub(token), username)
-    date = dt.datetime.now(dt.timezone.utc).date().isoformat()
-    updated = replace_block(readme, render_block(stats, date))
+    updated = replace_block(readme, render_block(stats))
     temporary = readme_path.with_suffix(".md.tmp")
     temporary.write_text(updated, encoding="utf-8")
     temporary.replace(readme_path)
