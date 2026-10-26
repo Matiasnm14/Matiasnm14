@@ -31,9 +31,14 @@ Discord: ................ Matiasnm14
 ```
 
 <!-- GITHUB-STATS:START -->
-```yaml
+```diff
 # GitHub Stats ────────────────────────────────────────────────
-Status: ................. Waiting for the first automatic update
+   Repos.Owned: ··············· 9
+   Repos.Contributed.Recent: ·· 2
+   Commits: ··················· 67
+++ Lines.Added: ··············· 153,888
+-- Lines.Removed: ············· 3,348
+   Lines.Net: ················· 150,540
 ```
 <!-- GITHUB-STATS:END -->
 
