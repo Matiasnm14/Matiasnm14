@@ -144,10 +144,17 @@ def render_block(stats):
              "# GitHub Stats ────────────────────────────────────────────────"]
     for label, key in labels:
         lines.append(f"{label}: {'.' * (26 - len(label))} {stats[key]:,}")
-    # YAML mapping keys receive the same highlighting as OS, IDE, etc.
-    # Keep both signed counters in a key so they share that color, without diff backgrounds.
-    counters = f"++{stats['lines_added']:,} --{stats['lines_removed']:,}"
-    lines.extend(["", f"{counters}: Lines.Added / Lines.Removed", "```", END])
+    lines.extend(["```", ""])
+    # Native GitHub math provides per-value colors unavailable inside a YAML code block.
+    counter_rows = []
+    for label, prefix, key, color in [
+            ("Lines.Added", "++", "lines_added", "#39ff14"),
+            ("Lines.Removed", "--", "lines_removed", "#ff5555")]:
+        title = (label + ":").ljust(28, ".")
+        expression = (rf"\small{{\color{{#7ee787}}\texttt{{{title}}}}}"
+                      rf"{{\color{{{color}}}\texttt{{{prefix}{stats[key]:,}}}}}")
+        counter_rows.append(f"$`{expression}`$")
+    lines.extend(["<br>".join(counter_rows), END])
     return "\n".join(lines)
 
 

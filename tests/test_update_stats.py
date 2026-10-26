@@ -1,5 +1,6 @@
 import importlib.util
 import os
+import re
 from pathlib import Path
 import tempfile
 import unittest
@@ -16,11 +17,20 @@ class StatisticsTests(unittest.TestCase):
         return {"repositories": 12, "contributed_recent": 3, "commits": 70,
                 "lines_added": 160000, "lines_removed": 4000, "lines_net": 156000}
 
-    def test_rendered_statistics_use_yaml_and_signed_counter_key(self):
+    def test_line_counters_have_separate_labels_and_independent_colors(self):
         block = stats.render_block(self.sample_stats())
         self.assertIn("```yaml\n", block)
         self.assertNotIn("```diff", block)
-        self.assertIn("++160,000 --4,000: Lines.Added / Lines.Removed", block)
+        counters = re.findall(r"\$`([^`]+)`\$", block)
+        self.assertEqual(len(counters), 2)
+        self.assertIn("Lines.Added:", counters[0])
+        self.assertIn("++160,000", counters[0])
+        self.assertIn("#39ff14", counters[0])
+        self.assertIn("Lines.Removed:", counters[1])
+        self.assertIn("--4,000", counters[1])
+        self.assertIn("#ff5555", counters[1])
+        self.assertTrue(all("#7ee787" in line for line in counters))
+        self.assertIn("```\n\n$`", block)
         self.assertEqual(block.count(stats.START), 1)
         self.assertEqual(block.count(stats.END), 1)
 
