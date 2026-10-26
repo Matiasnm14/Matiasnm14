@@ -25,3 +25,21 @@ Email.Work: ............. matiasnunez1@upb.edu
 Discord: ................ Matiasnm14
 ```
 
+<!-- GITHUB-STATS:START -->
+```yaml
+# GitHub Stats ────────────────────────────────────────────────
+Status: ................. Waiting for the first automatic update
+```
+<!-- GITHUB-STATS:END -->
+
+<details>
+<summary>About these statistics</summary>
+
+Updated automatically every day at 00:17 Bolivia time (04:17 UTC), or manually from **Actions → Update profile stats → Run workflow**.
+
+- **Repos.Owned:** public repositories owned by this account, including forks.
+- **Repos.Contributed.Recent:** other public repositories with recent commit contributions, as returned by GitHub. This is not an all-time list.
+- **Commits / Lines:** commits authored by this account and reachable from the default branches of those repositories. Identical commit hashes are counted once, including across forks. Private repositories and commits GitHub cannot associate with this account are excluded.
+- **Lines.Added / Removed / Net:** accumulated lines added, removed, and their difference in those commits. These include text files such as documentation and generated files; they do not measure unique code currently present or code quality.
+
+</details>
