@@ -1,3 +1,8 @@
+![Matiasnm14 — terminal profile](assets/profile-terminal.svg)
+
+<details>
+<summary>Profile in plain text</summary>
+
 ```yaml
 matiasnm14 ─────────────────────────────────────────────────────
 
@@ -36,6 +41,8 @@ Discord: ................ Matiasnm14
    Lines.Net: ················· 150,332
 ```
 <!-- GITHUB-STATS:END -->
+
+</details>
 
 <details>
 <summary>About these statistics</summary>

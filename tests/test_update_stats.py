@@ -4,6 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
+import xml.etree.ElementTree as ET
 
 spec = importlib.util.spec_from_file_location(
     "update_stats", Path(__file__).resolve().parents[1] / "scripts/update_stats.py")
@@ -12,6 +13,55 @@ spec.loader.exec_module(stats)
 
 
 class StatisticsTests(unittest.TestCase):
+    def sample_stats(self):
+        return {"repositories": 12, "contributed_recent": 3, "commits": 70,
+                "lines_added": 160000, "lines_removed": 4000, "lines_net": 156000}
+
+    def test_terminal_svg_escapes_profile_text_and_contains_all_statistics(self):
+        readme = (Path(__file__).resolve().parents[1] / "README.md").read_text()
+        readme = readme.replace("Reading, Music", "Reading & <Music>")
+        svg = stats.render_terminal(self.sample_stats(), readme)
+        root = ET.fromstring(svg)
+        content = " ".join(root.itertext())
+        self.assertIn("Reading & <Music>", content)
+        for value in ("12", "3", "70", "160,000", "4,000", "156,000"):
+            self.assertIn(value, content)
+        self.assertNotIn("<image", svg)
+        self.assertNotIn("<script", svg)
+
+    def test_success_updates_readme_and_terminal_together(self):
+        readme_text = (Path(__file__).resolve().parents[1] / "README.md").read_text()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "README.md").write_text(readme_text)
+            with patch.object(stats, "ROOT", root), \
+                 patch.dict(os.environ, {"GH_TOKEN": "test-token"}), \
+                 patch.object(stats, "collect_stats", return_value=self.sample_stats()):
+                stats.main()
+            self.assertEqual((root / "README.md").read_text(),
+                             stats.replace_block(readme_text, stats.render_block(self.sample_stats())))
+            graphic = root / "assets/profile-terminal.svg"
+            self.assertIn("160,000", graphic.read_text())
+            ET.parse(graphic)
+            self.assertFalse((root / "README.md.tmp").exists())
+            self.assertFalse(graphic.with_suffix(".svg.tmp").exists())
+
+    def test_render_error_preserves_both_existing_files(self):
+        original = f"{stats.START}\nprevious\n{stats.END}"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "README.md").write_text(original)
+            (root / "assets").mkdir()
+            graphic = root / "assets/profile-terminal.svg"
+            graphic.write_text("previous graphic")
+            with patch.object(stats, "ROOT", root), \
+                 patch.dict(os.environ, {"GH_TOKEN": "test-token"}), \
+                 patch.object(stats, "collect_stats", return_value=self.sample_stats()):
+                with self.assertRaises(ValueError):
+                    stats.main()
+            self.assertEqual((root / "README.md").read_text(), original)
+            self.assertEqual(graphic.read_text(), "previous graphic")
+
     def test_shared_commit_is_counted_once(self):
         commits = {"me/a": [{"oid": "shared", "additions": 20, "deletions": 3}],
                    "other/b": [{"oid": "shared", "additions": 20, "deletions": 3},
