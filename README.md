@@ -24,3 +24,10 @@ Email.Personal: ......... matiasnm14@gmail.com
 Email.Work: ............. matiasnunez1@upb.edu
 Discord: ................ Matiasnm14
 ```
+
+<!-- GITHUB-STATS:START -->
+```yaml
+# GitHub Stats ────────────────────────────────────────────────
+Status: ................. Waiting for the next automatic update
+```
+<!-- GITHUB-STATS:END -->

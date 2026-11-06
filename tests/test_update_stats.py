@@ -35,7 +35,8 @@ class StatisticsTests(unittest.TestCase):
         self.assertEqual(block.count(stats.END), 1)
 
     def test_success_updates_only_readme_without_creating_images(self):
-        readme_text = (Path(__file__).resolve().parents[1] / "README.md").read_text()
+        readme_text = (f"Profile introduction\n\n{stats.START}\n"
+                       f"Previous statistics\n{stats.END}\n\nContact information\n")
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "README.md").write_text(readme_text)
