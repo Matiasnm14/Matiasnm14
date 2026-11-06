@@ -139,14 +139,15 @@ def collect_stats(api, username):
 def render_block(stats):
     labels = [("Repos.Owned", "repositories"),
               ("Repos.Contributed.Recent", "contributed_recent"),
-              ("Commits", "commits"), ("Lines.Added", "lines_added"),
-              ("Lines.Removed", "lines_removed"), ("Lines.Net", "lines_net")]
-    lines = [START, "```diff",
+              ("Commits", "commits"), ("Lines.Net", "lines_net")]
+    lines = [START, "```yaml",
              "# GitHub Stats ────────────────────────────────────────────────"]
-    # Diff highlighting keeps green/red counters inside the same code block.
-    prefixes = {"lines_added": "++ ", "lines_removed": "-- "}
     for label, key in labels:
-        prefix = prefixes.get(key, "   ")
+        lines.append(f"{label}: {'.' * (26 - len(label))} {stats[key]:,}")
+    lines.extend(["```", "", "```diff"])
+    # Keep diff colors separate so the main statistics retain YAML highlighting.
+    for label, key, prefix in [("Lines.Added", "lines_added", "++ "),
+                               ("Lines.Removed", "lines_removed", "-- ")]:
         lines.append(f"{prefix}{label}: {'.' * (26 - len(label))} {stats[key]:,}")
     lines.extend(["```", END])
     return "\n".join(lines)

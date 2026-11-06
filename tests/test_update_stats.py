@@ -16,16 +16,21 @@ class StatisticsTests(unittest.TestCase):
         return {"repositories": 12, "contributed_recent": 3, "commits": 70,
                 "lines_added": 160000, "lines_removed": 4000, "lines_net": 156000}
 
-    def test_line_counters_share_statistics_block_with_diff_colors(self):
+    def test_line_counters_use_diff_block_separate_from_yaml_statistics(self):
         block = stats.render_block(self.sample_stats())
-        self.assertEqual(block.count("```"), 2)
-        self.assertTrue(block.startswith(f"{stats.START}\n```diff\n"))
+        self.assertEqual(block.count("```"), 4)
+        self.assertTrue(block.startswith(f"{stats.START}\n```yaml\n"))
         self.assertTrue(block.endswith(f"\n```\n{stats.END}"))
+        yaml_content = block.split("```yaml\n", 1)[1].split("```", 1)[0]
         content = block.split("```diff\n", 1)[1].split("```", 1)[0]
         self.assertRegex(content, r"(?m)^\+\+ Lines\.Added: \.+ 160,000$")
         self.assertRegex(content, r"(?m)^-- Lines\.Removed: \.+ 4,000$")
         for label in ("Repos.Owned", "Repos.Contributed.Recent", "Commits", "Lines.Net"):
-            self.assertIn(f"   {label}:", content)
+            self.assertIn(f"\n{label}:", yaml_content)
+            self.assertNotIn(label, content)
+        self.assertNotIn("Lines.Added", yaml_content)
+        self.assertNotIn("Lines.Removed", yaml_content)
+        self.assertIn("```\n\n```diff\n", block)
         self.assertNotIn("Updated:", block)
         self.assertNotIn("$`", block)
         self.assertEqual(block.count(stats.START), 1)
