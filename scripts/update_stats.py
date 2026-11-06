@@ -139,22 +139,16 @@ def collect_stats(api, username):
 def render_block(stats):
     labels = [("Repos.Owned", "repositories"),
               ("Repos.Contributed.Recent", "contributed_recent"),
-              ("Commits", "commits"), ("Lines.Net", "lines_net")]
-    lines = [START, "```yaml",
+              ("Commits", "commits"), ("Lines.Added", "lines_added"),
+              ("Lines.Removed", "lines_removed"), ("Lines.Net", "lines_net")]
+    lines = [START, "```diff",
              "# GitHub Stats ────────────────────────────────────────────────"]
+    # Diff highlighting keeps green/red counters inside the same code block.
+    prefixes = {"lines_added": "++ ", "lines_removed": "-- "}
     for label, key in labels:
-        lines.append(f"{label}: {'.' * (26 - len(label))} {stats[key]:,}")
-    lines.extend(["```", ""])
-    # Native GitHub math provides per-value colors unavailable inside a YAML code block.
-    counter_rows = []
-    for label, prefix, key, color in [
-            ("Lines.Added", "++", "lines_added", "#39ff14"),
-            ("Lines.Removed", "--", "lines_removed", "#ff5555")]:
-        title = (label + ":").ljust(28, ".")
-        expression = (rf"\small{{\color{{#7ee787}}\texttt{{{title}}}}}"
-                      rf"{{\color{{{color}}}\texttt{{{prefix}{stats[key]:,}}}}}")
-        counter_rows.append(f"$`{expression}`$")
-    lines.extend(["<br>".join(counter_rows), END])
+        prefix = prefixes.get(key, "   ")
+        lines.append(f"{prefix}{label}: {'.' * (26 - len(label))} {stats[key]:,}")
+    lines.extend(["```", END])
     return "\n".join(lines)
 
 
