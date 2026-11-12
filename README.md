@@ -28,14 +28,14 @@ Discord: ................ Matiasnm14
 <!-- GITHUB-STATS:START -->
 ```yaml
 # GitHub Stats ────────────────────────────────────────────────
-Repos.Owned: ............... 11
+Repos.Owned: ............... 12
 Repos.Contributed.Recent: .. 2
-Commits: ................... 103
-Lines.Net: ................. 247,942
+Commits: ................... 104
+Lines.Net: ................. 248,657
 ```
 
 ```diff
-++ Lines.Added: ............... 259,149
+++ Lines.Added: ............... 259,864
 -- Lines.Removed: ............. 11,207
 ```
 <!-- GITHUB-STATS:END -->
